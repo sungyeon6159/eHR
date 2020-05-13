@@ -1,0 +1,28 @@
+#board
+message.board.list=게시글 목록
+message.board.welcomeMsg=게시판에 오신걸 환영 합니다.
+message.board.search.condition.all=전체
+message.board.search.condition.title=제목
+message.board.search.condition.content=내용
+message.board.search.condition.btn=검색
+message.board.search.word=검색어
+#board table
+message.board.table.head.seq=순번
+message.board.table.head.title=제목
+message.board.table.head.writer=작성자
+message.board.table.head.regDate=등록일
+message.board.table.head.cnt=조회수
+message.board.link.insertBoard=등록
+
+#login
+message.user.login.title=로그인
+message.user.login.id=아이디
+message.user.login.password=비번
+message.user.login.login.btn=로그인
+
+message.user.login.language.en=영어
+message.user.login.language.ko=한글
+
+#common
+message.common.message={0} 하시겠습니까? 
+message.common.message.save={0} 입력 하세요.
