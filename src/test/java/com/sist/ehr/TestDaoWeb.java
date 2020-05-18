@@ -97,11 +97,16 @@ public class TestDaoWeb {
 		LOG.debug("^WebApplicationContext^"+webApplicationContext);
 		LOG.debug("^^^^^^^^^^^");
 		user01=new UserVO("j01_124","이상무","1234",Level.BASIC,1,0,"jamesol@paran.com","");
+		user01.sethLevel(1);
+
 		user02=new UserVO("j02_124","이상무","1234",Level.SILVER ,51,10,"jamesol@paran.com","");
+		user02.sethLevel(2);
+
 		user03=new UserVO("j03_124","이상무","1234",Level.GOLD,52,31,"jamesol@paran.com","");
+		user03.sethLevel(3);
 
 		user04=new UserVO("j0","이상무","1234",Level.BASIC,1,0,"jamesol@paran.com","");
-
+		user04.sethLevel(1);
 	}
 
 	@After
@@ -356,6 +361,7 @@ public class TestDaoWeb {
 
 	//특정 예외가 발생하면 성공
 	@Test(expected = EmptyResultDataAccessException.class)
+	@Ignore
 	public void getFailure() throws ClassNotFoundException, SQLException {
 		LOG.debug("=====================");
 		LOG.debug("=count() dao="+dao);

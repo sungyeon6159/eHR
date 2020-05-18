@@ -118,10 +118,10 @@
 		    #{u_id,jdbcType=VARCHAR},
 		    #{name,jdbcType=VARCHAR},
 		    #{passwd,jdbcType=VARCHAR},
-		    #{level,jdbcType=NUMERIC},
+		    #{hLevel,jdbcType=NUMERIC},
 		    #{login,jdbcType=NUMERIC},
 		    #{recommend,jdbcType=NUMERIC},
-		    #{mail,jdbcType=VARCHAR}
+		    #{email,jdbcType=VARCHAR}
 		)
 	</insert>
 

@@ -19,6 +19,10 @@ public class UserVO extends DTO {
 
 	/**Level*/
 	private Level  level;
+
+	private int    hLevel;
+
+
 	/**로그인 회수 */
 	private int    login;
 	/**추천 */
@@ -44,6 +48,37 @@ public class UserVO extends DTO {
 		this.recommend = recommend;
 		this.email = email;
 		this.regDt = regDt;
+	}
+
+
+
+	/**
+	 * @return the hLevel
+	 */
+	public int gethLevel() {
+		return hLevel;
+	}
+
+
+
+	/**
+	 * @param hLevel the hLevel to set
+	 */
+	public void sethLevel(int hLevel) {
+		this.hLevel = hLevel;
+
+		//숫자->Level로 변경
+		/*
+		 * switch(value) {
+			case 1: return BASIC;
+			case 2: return SILVER;
+			case 3: return GOLD;
+			default: throw new AssertionError("Unknown value"+value);
+		   }
+		 */
+		Level tmpLevel=Level.valueOf(hLevel);
+		level = tmpLevel;
+
 	}
 
 
