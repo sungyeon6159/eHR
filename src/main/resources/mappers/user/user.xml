@@ -104,8 +104,8 @@
 		WHERE board_id = #{boardId}
     </select>
 
-	<!-- 등록 : namespace+id = com.sist.ehr.board.doInsert -->
-	<insert id="doInsert" parameterType="com.sist.ehr.board.service.BoardVO">
+	<!-- 등록 : namespace+id = com.sist.ehr.user.doInsert -->
+	<insert id="doInsert" parameterType="UserVO">
 		INSERT INTO hr_member (
 		    u_id,
 		    name,
@@ -115,13 +115,13 @@
 		    recommend,
 		    mail
 		) VALUES (
-		    ?,
-		    ?,
-		    ?,
-		    ?,
-		    ?,
-		    ?,
-		    ?
+		    #{u_id,jdbcType=VARCHAR},
+		    #{name,jdbcType=VARCHAR},
+		    #{passwd,jdbcType=VARCHAR},
+		    #{level,jdbcType=NUMERIC},
+		    #{login,jdbcType=NUMERIC},
+		    #{recommend,jdbcType=NUMERIC},
+		    #{mail,jdbcType=VARCHAR}
 		)
 	</insert>
 

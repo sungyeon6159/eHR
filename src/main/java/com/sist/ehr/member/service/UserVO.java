@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.sist.ehr.member.service;
 
@@ -16,7 +16,7 @@ public class UserVO extends DTO {
 	private String name   ;
 	/**비번*/
 	private String passwd ;
-	
+
 	/**Level*/
 	private Level  level;
 	/**로그인 회수 */
@@ -24,11 +24,11 @@ public class UserVO extends DTO {
 	/**추천 */
 	private int    recommend;
 	/**이메일 */
-	private String email;  
+	private String email;
 	/**등록일 */
 	private String regDt;
-	
-	
+
+
 	public UserVO() {}
 
 
@@ -180,7 +180,7 @@ public class UserVO extends DTO {
 		this.passwd = passwd;
 	}
 
-	
+
 
 	@Override
 	public String toString() {
@@ -250,8 +250,8 @@ public class UserVO extends DTO {
 
 
 
-	
-	
-	
-	
+
+
+
+
 }
