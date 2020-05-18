@@ -212,8 +212,14 @@ public class BoardController {
 		return "board/board_mng";
 	}
 	
-	
-	
+	@RequestMapping(value = "board/do_insert_view.do",method = RequestMethod.GET)
+	public String doInsertView(Locale locale) {
+		
+		LOG.debug("1=================");
+		LOG.debug("1=board/board_write");
+		LOG.debug("1=================");
+		return "board/board_write";
+	}
 	
 	@RequestMapping(value = "board/do_insert.do",method = RequestMethod.POST
 			,produces = "application/json; charset=UTF-8")

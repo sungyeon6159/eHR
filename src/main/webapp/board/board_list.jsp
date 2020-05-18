@@ -128,7 +128,7 @@
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						<button type="button" onclick="javascript:doRetrieve();"
 							class="btn btn-primary btn-sm">조회</button>
-						<button type="button" class="btn btn-primary btn-sm">등록</button>
+						<button type="button" onclick="javascript:doInsertView();" class="btn btn-primary btn-sm">등록</button>
 					</div>
 				</form>
 			</div>
@@ -192,6 +192,15 @@
 		
 	</script>
 	<script type="text/javascript">
+        //등록으로 화면 이동.
+	    function doInsertView() {
+	        console.log("doInsertView");
+	        console.log("")
+	        var frm = document.searchFrm;
+	        frm.action = "${hContext}/board/do_insert_view.do";
+	        frm.submit();
+	    }
+    	
         function doSeachPage(url,no){
             console.log("#url:"+url);
             console.log("#no:" + no);

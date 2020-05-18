@@ -19,7 +19,7 @@
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/" />
 		<beans:property name="suffix" value=".jsp" />
-		<beans:property name="order"  value="3" />
+		<beans:property name="order"  value="2" />
 	</beans:bean>
 	
 	<!-- view이름과 동일한 view찾아 주는 bean:Download.java -->
@@ -29,8 +29,30 @@
 	
 	<beans:bean id="downloadView" class="com.sist.ehr.cmn.DownloadView"/>
 	
+	<!-- Tiles:view우선 순위 0 -->
+	<beans:bean id="tilesViewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver">
+	   <beans:property name="order" value="0"/>
+	</beans:bean>
+	
+	<!-- Tiles main config파일 위치 -->
+	<beans:bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+	   <beans:property name="definitions">
+	       <beans:list>
+	           <beans:value>/WEB-INF/views/tiles/tiles.xml</beans:value>
+	       </beans:list>
+	   </beans:property>
+	</beans:bean>
+	
+	
 	
 	<context:component-scan base-package="com.sist.ehr" />
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

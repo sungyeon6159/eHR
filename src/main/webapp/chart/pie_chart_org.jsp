@@ -1,12 +1,12 @@
 <%--
   /**
-  * Class Name : index.jsp
-  * Description : 
+  * Class Name : pie_chart.jsp
+  * Description : google pie chart
   * Modification Information
   *
   *   수정일                   수정자                      수정내용
   *  -------    --------    ---------------------------
-  *  2020. 4. 23.            최초 생성
+  *  2020. 5. 15.            최초 생성
   *
   * author 실행환경 개발팀
   * since 2009.01.06
@@ -39,16 +39,38 @@
     <![endif]-->
   </head>
   <body>
-    <h1>Hello, world! ${hContext}</h1>
-
+   
+    <div id="piechart" style="width: 900px; height: 500px;"></div>
     <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
     <script src="${hContext}/resources/js/jquery-migrate-1.4.1.js"></script>
     <!-- 모든 컴파일된 플러그인을 포함합니다 (아래), 원하지 않는다면 필요한 각각의 파일을 포함하세요 -->
     <script src="${hContext}/resources/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
 
-    </script>
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Task', 'Hours per Day'],
+          ['Work',     11],
+          ['Eat',      2],
+          ['Commute',  2],
+          ['Watch TV', 2],
+          ['Sleep',    7]
+        ]);
+
+        var options = {
+          title: 'My Daily Activities'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
+    </script>  
   </body>
 </html>
+

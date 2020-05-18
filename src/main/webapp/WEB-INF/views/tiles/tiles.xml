@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+    <definition name="basede-finition" 
+    template="/WEB-INF/views/tiles/layouts/defaultLayout.jsp">
+        <!-- 제목처리 -->
+        <put-attribute name="title" value=""/>
+        
+        <!-- top -->
+        <put-attribute name="header" 
+        value="/WEB-INF/views/tiles/layouts/header.jsp"/>
+        
+        <!-- 메뉴 -->
+        <put-attribute name="menu" 
+        value="/WEB-INF/views/tiles/layouts/menu.jsp"/>
+        
+        <!-- body -->
+        <put-attribute name="body" 
+        value=""/>
+        
+        <!-- 메뉴 -->
+        <put-attribute name="footer" 
+        value="/WEB-INF/views/tiles/layouts/footer.jsp"/>
+    </definition>
+    
+    <!-- board -->
+    <definition name="board/*" extends="basede-finition">
+        <put-attribute name="title" value="EHR>Board"/>
+        <put-attribute name="body" value="/board/{1}.jsp"/>
+    </definition>
+    
+    <!-- hello -->
+    <definition name="hello/*" extends="basede-finition">
+        <put-attribute name="title" value="EHR>Hello"/>
+        <put-attribute name="body" value="/hello/{1}.jsp"/>
+    </definition>    
+    
+    <!-- hello -->
+    <definition name="chart/*" extends="basede-finition">
+        <put-attribute name="title" value="EHR>파이차트"/>
+        <put-attribute name="body" value="/chart/{1}.jsp"/>
+    </definition>     
+    
+    
+
+</tiles-definitions>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

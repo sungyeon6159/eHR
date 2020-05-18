@@ -22,6 +22,21 @@ public class LocaleController {
 	@Autowired
 	LocaleResolver localeResolver;
 	
+	@RequestMapping(value = "hello/hello.do", method = RequestMethod.GET)
+	public String hello(HttpServletRequest req, HttpServletResponse res,
+			Locale locale, Model model ) {
+		String lang = StringUtil.nvl(req.getParameter("lang"));
+		LOG.debug("========================");
+		LOG.debug("=lang="+lang);
+		LOG.debug("========================");
+		
+		Locale  paramLocale=new Locale(lang);
+		localeResolver.setLocale(req, res, paramLocale);
+		
+		// /hello/hello.jsp
+		return "hello/hello";
+	}
+	
 	@RequestMapping(value = "login.do", method = RequestMethod.GET)
 	public String login(HttpServletRequest req, HttpServletResponse res,
 			Locale locale, Model model ) {

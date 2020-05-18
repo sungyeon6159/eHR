@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <settings>
-        <!-- 전통적인 데이터베이스 칼럼명 형태인 A_COLUMN을 
+        <!-- 전통적인 데이터베이스 칼럼명 형태인 A_COLUMN을
           CamelCase형태의 자바 프로퍼티명 형태인 aColumn으로 자동으로 매핑하도록 함:매핑 false-->
         <setting name="mapUnderscoreToCamelCase" value="false"/>
     </settings>
@@ -12,6 +12,7 @@
     <typeAliases>
         <typeAlias type="com.sist.ehr.code.service.CodeVO" alias="CodeVO"/>
         <typeAlias type="com.sist.ehr.board.service.BoardVO" alias="BoardVO"/>
-        <typeAlias type="com.sist.ehr.cmn.SearchVO" alias="SearchVO"/>  
+        <typeAlias type="com.sist.ehr.cmn.SearchVO" alias="SearchVO"/>
+        <typeAlias type="com.sist.ehr.member.service.UserVO"  alias="UserVO"/>
     </typeAliases>
-</configuration>  
+</configuration>
