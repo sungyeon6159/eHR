@@ -3,61 +3,55 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sist.ehr.user">
-    <!-- 검색조건
-        10: 제목
-        20: 내용
-        30: 등록자ID
-    -->
+
     <sql id="baseCondition">
         <choose>
             <when test="'10' == searchDiv">
-                AND title like '%' || #{searchWord} || '%'
+                AND u_id like '%' || #{searchWord} || '%'
             </when>
             <when test="'20' == searchDiv">
-                AND contents like '%' || #{searchWord} || '%'
-            </when>
-            <when test="'30' == searchDiv">
-                AND reg_id like '%' || #{searchWord} || '%'
+                AND name like '%' || #{searchWord} || '%'
             </when>
         </choose>
     </sql>
 
     <!-- 목록조회 -->
-    <select id="doRetrieve" parameterType="SearchVO" resultType="BoardVO">
-		SELECT T1.*,T2.*
-		FROM(
-		    SELECT B.BOARD_ID as boardId,
-		           B.TITLE,
-		           B.READ_CNT as readCnt,
-		           B.CONTENTS,
-		           B.REG_ID   as regId,
-		           CASE TO_CHAR(B.REG_DT,'YYYY/MM/DD') WHEN TO_CHAR(SYSDATE,'YYYY/MM/DD')
-		                                               THEN TO_CHAR(SYSDATE,'HH24:MI')
-		           ELSE TO_CHAR(B.REG_DT,'YYYY/MM/DD') END regDt,
-		           B.rnum as num
-		    FROM(
-		        SELECT ROWNUM AS rnum,a.*
-		        FROM (
-		            SELECT *
-		            FROM board
-		            WHERE 1=1
-		            --검색조건
-		            <include refid="baseCondition"/>
-		            ORDER BY reg_dt desc
-		        )A
-		        WHERE ROWNUM  <![CDATA[ <= ]]> (#{pageSize} *(#{pageNum} - 1)+#{pageSize})
-		    )B
-		    WHERE rnum <![CDATA[ >= ]]> (#{pageSize}*(#{pageNum}-1)+1)
-		)T1
-		NATURAL JOIN
-		(
-		    SELECT COUNT(*) totalCnt
-		    FROM board
-		    WHERE 1=1
-		    --검색조건
-		    <include refid="baseCondition"/>
-		)T2
-
+    <select id="doRetrieve" parameterType="SearchVO" resultType="UserVO">
+    SELECT T1.*,T2.*
+    FROM(
+        SELECT  B.u_id,
+                B.name,
+                B.passwd,
+                B.u_level as hLevel,
+                B.login,
+                B.recommend,
+                B.mail as email,
+                CASE TO_CHAR(B.REG_DT,'YYYY/MM/DD') WHEN TO_CHAR(SYSDATE,'YYYY/MM/DD')
+                                                   THEN TO_CHAR(SYSDATE,'HH24:MI')
+                ELSE TO_CHAR(B.REG_DT,'YYYY/MM/DD') END regDt,
+                rnum as num
+        FROM(
+            SELECT ROWNUM rnum,
+                   A.*
+            FROM (
+                SELECT *
+                FROM hr_member
+                WHERE reg_dt <![CDATA[ > ]]>  '1900/01/01'
+                --검색조건
+                <include refid="baseCondition"/>
+                ORDER BY reg_dt  DESC
+            )A
+            WHERE ROWNUM <![CDATA[ <= ]]> (#{pageSize} *(#{pageNum} - 1)+#{pageSize})
+        )B
+        WHERE B.RNUM <![CDATA[ >= ]]> (#{pageSize}*(#{pageNum}-1)+1)
+        )T1 CROSS JOIN
+        (
+        SELECT count(*) totalCnt
+        FROM hr_member
+        WHERE reg_dt  > '1900/01/01'
+        --검색조건
+         <include refid="baseCondition"/>
+        )T2
     </select>
 
     <!-- 수정 : readCount-->
@@ -70,78 +64,93 @@
     </update>
 
     <!-- 수정 -->
-    <update id="doUpdate" parameterType="BoardVO">
-		UPDATE board
-		SET title = #{title,jdbcType=VARCHAR},
-		    contents = #{contents,jdbcType=VARCHAR},
-		    reg_id = #{regId,jdbcType=VARCHAR},
-		    reg_dt = SYSDATE
-		WHERE board_id = #{boardId}
-    </update>
 
-    <sql id="boardColumns">
-            board_id as boardId,
-            title,
-            read_cnt as readCnt,
-            contents,
-            reg_id   as regId,
-            TO_CHAR(reg_dt,'YYYY/MM/DD HH24MISS') regDt
-    </sql>
-
-    <!-- 단건조회 : title-board_id -->
-    <select id="doSelectOneTitle" parameterType="BoardVO" resultType="BoardVO">
-        SELECT
-            <include refid="boardColumns"/>
-        FROM board
-        WHERE title like  '%' || #{title} || '%'
+    <!-- 전체조회 -->
+    <select id="getAll" parameterType="UserVO" resultType="UserVO">
+         SELECT
+             u_id,
+             name,
+             passwd,
+             u_level as hLevel,
+             login,
+             recommend,
+             mail as email,
+             TO_CHAR(reg_dt,'YYYY/MM/DD HH24MISS') AS regDt
+         FROM
+             hr_member
+         WHERE  u_id like '%'|| #{u_id,jdbcType=VARCHAR} ||'%'
+         ORDER BY u_id
     </select>
+
 
     <!-- 단건조회 -->
-    <select id="doSelectOne" parameterType="BoardVO" resultType="BoardVO">
-		SELECT
-		    <include refid="boardColumns"/>
-		FROM board
-		WHERE board_id = #{boardId}
+    <select id="doSelectOne" parameterType="UserVO" resultType="UserVO">
+         SELECT
+             u_id,
+             name,
+             passwd,
+             u_level as hLevel,
+             login,
+             recommend,
+             mail as email,
+             TO_CHAR(reg_dt,'YYYY/MM/DD HH24MISS') AS regDt
+         FROM
+             hr_member
+         WHERE u_id = #{u_id,jdbcType=VARCHAR}
     </select>
 
-	<!-- 등록 : namespace+id = com.sist.ehr.user.doInsert -->
-	<insert id="doInsert" parameterType="UserVO">
-		INSERT INTO hr_member (
-		    u_id,
-		    name,
-		    passwd,
-		    u_level,
-		    login,
-		    recommend,
-		    mail
-		) VALUES (
-		    #{u_id,jdbcType=VARCHAR},
-		    #{name,jdbcType=VARCHAR},
-		    #{passwd,jdbcType=VARCHAR},
-		    #{hLevel,jdbcType=NUMERIC},
-		    #{login,jdbcType=NUMERIC},
-		    #{recommend,jdbcType=NUMERIC},
-		    #{email,jdbcType=VARCHAR}
-		)
-	</insert>
+    <update id="doUpdate" parameterType="UserVO">
+        UPDATE hr_member
+        SET  name        = #{name,jdbcType=VARCHAR},
+             passwd      = #{passwd,jdbcType=VARCHAR},
+             u_level     = #{hLevel,jdbcType=NUMERIC},
+             login       = #{login,jdbcType=NUMERIC},
+             recommend   = #{recommend,jdbcType=NUMERIC},
+             mail        = #{email,jdbcType=VARCHAR},
+             reg_dt      = sysdate
+        WHERE
+            u_id =  #{u_id,jdbcType=VARCHAR}
+    </update>
+    <!-- 등록 : namespace+id = com.sist.ehr.user.doInsert -->
+    <insert id="doInsert" parameterType="UserVO">
+        INSERT INTO hr_member (
+            u_id,
+            name,
+            passwd,
+            u_level,
+            login,
+            recommend,
+            mail
+        ) VALUES (
+            #{u_id,jdbcType=VARCHAR},
+            #{name,jdbcType=VARCHAR},
+            #{passwd,jdbcType=VARCHAR},
+            #{hLevel,jdbcType=NUMERIC},
+            #{login,jdbcType=NUMERIC},
+            #{recommend,jdbcType=NUMERIC},
+            #{email,jdbcType=VARCHAR}
+        )
+    </insert>
 
-	<!--삭제 : namespace+id = com.sist.ehr.board.doDelete
-	   <![CDATA[ >,<,>=,<= ]]>
-	 -->
-	<delete id="doDelete" parameterType="BoardVO"  >
-	    <![CDATA[
-		  DELETE FROM board WHERE board_id = #{boardId}
-		]]>
-	</delete>
-
-    <delete id="doDeleteAll"  >
+    <!--삭제 : namespace+id = com.sist.ehr.user.doDelete
+       <![CDATA[ >,<,>=,<= ]]>
+     -->
+    <delete id="doDelete" parameterType="UserVO"  >
         <![CDATA[
-          DELETE FROM board
+          DELETE FROM hr_member WHERE u_id =  #{u_id,jdbcType=VARCHAR}
         ]]>
     </delete>
 
-
-
-
-
+    <!-- 단건조회 -->
+    <select id="count" parameterType="UserVO" resultType="java.lang.Integer" >
+        SELECT COUNT(*)
+        FROM  HR_MEMBER
+        WHERE u_id like '%'|| #{u_id,jdbcType=VARCHAR} ||'%'
+    </select>
 </mapper>
+
+
+
+
+
+

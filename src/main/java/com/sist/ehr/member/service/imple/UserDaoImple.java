@@ -99,31 +99,22 @@ public class UserDaoImple implements UserDao {
 	public int doUpdate(DTO dto) {
 		int flag = 0;
 		UserVO inVO = (UserVO) dto;
-		StringBuilder sb=new StringBuilder();
-		sb.append(" UPDATE hr_member         \n");
-		sb.append(" SET  name = ?,           \n");
-		sb.append("      passwd = ?,         \n");
-		sb.append("      u_level = ?,        \n");
-		sb.append("      login = ?,          \n");
-		sb.append("      recommend = ?,      \n");
-		sb.append("      mail = ?,           \n");
-		sb.append("      reg_dt = sysdate    \n");
-		sb.append(" WHERE                    \n");
-		sb.append("     u_id = ?             \n");
 
-		LOG.debug("==============================");
-		LOG.debug("=Query=\n"+sb.toString());
-		LOG.debug("=Param= "+inVO.toString());
-		Object[] args= {inVO.getName()
-				      ,inVO.getPasswd()
-				      ,inVO.getLevel().intValue()
-				      ,inVO.getLogin()
-				      ,inVO.getRecommend()
-				      ,inVO.getEmail()
-				      ,inVO.getU_id()};
-		flag = this.jdbcTemplate.update(sb.toString(), args);
-		LOG.debug("=flag= "+flag);
-		LOG.debug("==============================");
+		LOG.debug("1==============================");
+		LOG.debug("1=inVO="+inVO);
+		LOG.debug("1==============================");
+
+		// namespace+id = com.sist.ehr.user.doUpdate
+		String statement = NAMESPACE+".doUpdate";
+		LOG.debug("2==============================");
+		LOG.debug("2=statement="+statement);
+		LOG.debug("2==============================");
+
+		flag = this.sqlSessionTemplate.update(statement, inVO);
+		LOG.debug("3==============================");
+		LOG.debug("3=flag="+flag);
+		LOG.debug("3==============================");
+
 		return flag;
 	}
 
@@ -152,35 +143,24 @@ public class UserDaoImple implements UserDao {
 	public DTO doSelectOne(DTO dto) {
 		UserVO outVO = null;        //return UserVO
 		UserVO inVO  = (UserVO) dto;//Param UserVO
-		StringBuilder  sb=new StringBuilder();
-		sb.append(" SELECT                                               \n");
-		sb.append("     u_id,                                            \n");
-		sb.append("     name,                                            \n");
-		sb.append("     passwd,                                          \n");
-		sb.append("     u_level,                                         \n");
-		sb.append("     login,                                           \n");
-		sb.append("     recommend,                                       \n");
-		sb.append("     mail,                                            \n");
-		sb.append("     TO_CHAR(reg_dt,'YYYY/MM/DD HH24MISS') AS reg_dt, \n");
-		sb.append("     1 rnum,       \n");
-		sb.append("     1 total_cnt   \n");
-		sb.append(" FROM                                                 \n");
-		sb.append("     hr_member                                        \n");
-		sb.append(" WHERE u_id = ?                                       \n");
 
-		//Query수행
-		LOG.debug("==============================");
-		LOG.debug("=Query=\n"+sb.toString());
-		LOG.debug("=Param=\n"+inVO.getU_id());
+		LOG.debug("1==============================");
+		LOG.debug("1=inVO="+inVO);
+		LOG.debug("1==============================");
 
-		Object []args = {inVO.getU_id()};
-		outVO = this.jdbcTemplate.queryForObject(sb.toString()
-				,args
-				,rowMapper);
-		LOG.debug("=outVO=\n"+outVO);
-		LOG.debug("==============================");
+		// namespace+id = com.sist.ehr.user.doInsert
+		String statement = NAMESPACE+".doSelectOne";
+		LOG.debug("2==============================");
+		LOG.debug("2=statement="+statement);
+		LOG.debug("2==============================");
 
+		outVO = this.sqlSessionTemplate.selectOne(statement, inVO);
+		//hLevel -> Level전환
+		outVO.setLevel(Level.valueOf(outVO.gethLevel()));
 
+		LOG.debug("3==============================");
+		LOG.debug("3=outVO="+outVO);
+		LOG.debug("3==============================");
 
 		return outVO;
 	}
@@ -188,18 +168,22 @@ public class UserDaoImple implements UserDao {
 	public int doDelete(DTO dto) {
 		int flag = 0;
 		UserVO inVO = (UserVO) dto;
-		StringBuilder  sb=new StringBuilder();
-		sb.append(" DELETE FROM hr_member \n");
-		sb.append(" WHERE u_id = ?        \n");
-		LOG.debug("==============================");
-		LOG.debug("=Query=\n"+sb.toString());
-		LOG.debug("=Param="+inVO);
 
-		Object[] args = {inVO.getU_id()};
-		flag = jdbcTemplate.update(sb.toString(), args);
+		LOG.debug("1==============================");
+		LOG.debug("1=inVO="+inVO);
+		LOG.debug("1==============================");
 
-		LOG.debug("=flag="+flag);
-		LOG.debug("==============================");
+		// namespace+id = com.sist.ehr.user.doInsert
+		String statement = NAMESPACE+".doDelete";
+		LOG.debug("2==============================");
+		LOG.debug("2=statement="+statement);
+		LOG.debug("2==============================");
+
+		flag = this.sqlSessionTemplate.delete(statement, inVO);
+		LOG.debug("3==============================");
+		LOG.debug("3=flag="+flag);
+		LOG.debug("3==============================");
+
 		return flag;
 	}
 
@@ -247,85 +231,33 @@ public class UserDaoImple implements UserDao {
 		//검색구분
 		  //ID : 10
 		  //이름: 20
-		//검색어
-		StringBuilder whereSb=new StringBuilder();
 
-		if(null !=inVO && !"".equals(inVO.getSearchDiv())) {
-			if(inVO.getSearchDiv().equals("10")) {
-				whereSb.append("AND u_id like '%' || ? ||'%'   \n");
-			}else if(inVO.getSearchDiv().equals("20")) {
-				whereSb.append("AND name like '%' || ? ||'%'   \n");
-			}
+		LOG.debug("1==============================");
+		LOG.debug("1=inVO="+inVO);
+		LOG.debug("1==============================");
+
+		// namespace+id = com.sist.ehr.user.doInsert
+		String statement = NAMESPACE+".doRetrieve";
+		LOG.debug("2==============================");
+		LOG.debug("2=statement="+statement);
+		LOG.debug("2==============================");
+
+		List<UserVO> list = this.sqlSessionTemplate.selectList(statement, inVO);
+
+		//hLevel -> Level전환
+		List<UserVO> outList=new ArrayList<UserVO>();
+		for(UserVO vo: list) {
+			vo.setLevel(Level.valueOf(vo.gethLevel()));
+			outList.add(vo);
+			LOG.debug("3=vo="+vo);
+
 		}
 
+		LOG.debug("3==============================");
+		LOG.debug("3=outList="+outList);
+		LOG.debug("3==============================");
 
-		StringBuilder sb=new StringBuilder();
-		sb.append("SELECT T1.*,T2.*                                              \n");
-		sb.append("FROM(                                                         \n");
-		sb.append("    SELECT  B.u_id,                                           \n");
-		sb.append("            B.name,                                           \n");
-		sb.append("            B.passwd,                                         \n");
-		sb.append("            B.u_level,                                        \n");
-		sb.append("            B.login,                                          \n");
-		sb.append("            B.recommend,                                      \n");
-		sb.append("            B.mail,                                           \n");
-		sb.append("            TO_CHAR(B.reg_dt,'YYYY/MM/DD') reg_dt,            \n");
-		sb.append("            rnum                                              \n");
-		sb.append("    FROM(                                                     \n");
-		sb.append("        SELECT ROWNUM rnum,                                   \n");
-		sb.append("               A.*                                            \n");
-		sb.append("        FROM (                                                \n");
-		sb.append("            SELECT *                                          \n");
-		sb.append("            FROM hr_member                                    \n");
-		sb.append("            WHERE reg_dt  > '1900/01/01'                      \n");
-
-		sb.append("            --검색조건                                                                               \n");
-		//--검색----------------------------------------------------------------------
-		sb.append(whereSb.toString());
-		//--검색----------------------------------------------------------------------
-		sb.append("            ORDER BY reg_dt  DESC                             \n");
-		sb.append("        )A --10                                               \n");
-		//sb.append("        WHERE ROWNUM <= (&PAGE_SIZE*(&PAGE_NUM-1)+&PAGE_SIZE) \n");
-		sb.append("        WHERE ROWNUM <= (?*(?-1)+?) \n");
-		sb.append("    )B --1                                                    \n");
-		//sb.append("    WHERE B.RNUM >= (&PAGE_SIZE*(&PAGE_NUM-1)+1)              \n");
-		sb.append("    WHERE B.RNUM >= (?*(?-1)+1)              \n");
-		sb.append("    )T1 CROSS JOIN                                            \n");
-		sb.append("    (                                                         \n");
-		sb.append("    SELECT count(*) total_cnt                                 \n");
-		sb.append("    FROM hr_member                                            \n");
-		sb.append("    WHERE reg_dt  > '1900/01/01'                              \n");
-		sb.append("    --검색조건                                                   \n");
-		//--검색----------------------------------------------------------------------
-		sb.append(whereSb.toString());
-		//--검색----------------------------------------------------------------------
-		sb.append("    )T2                                                       \n");
-
-		//param
-		List<Object> listArg = new ArrayList<Object>();
-
-
-		//param set
-		if(null !=inVO && !"".equals(inVO.getSearchDiv())) {
-			listArg.add(inVO.getSearchWord());
-			listArg.add(inVO.getPageSize());
-			listArg.add(inVO.getPageNum());
-			listArg.add(inVO.getPageSize());
-			listArg.add(inVO.getPageSize());
-			listArg.add(inVO.getPageNum());
-			listArg.add(inVO.getSearchWord());
-
-		}else {
-			listArg.add(inVO.getPageSize());
-			listArg.add(inVO.getPageNum());
-			listArg.add(inVO.getPageSize());
-			listArg.add(inVO.getPageSize());
-			listArg.add(inVO.getPageNum());
-		}
-		List<UserVO> retList = this.jdbcTemplate.query(sb.toString(), listArg.toArray(), rowMapper);
-		LOG.debug("query \n"+sb.toString());
-		LOG.debug("param:"+listArg);
-		return retList;
+		return outList;
 	}
 
 }

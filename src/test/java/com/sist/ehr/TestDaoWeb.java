@@ -135,6 +135,7 @@ public class TestDaoWeb {
 	}
 	//단건 삭제
 	@Test
+	@Ignore
 	public void doInsert() {
 		//------------------------------
 		//1. 기존 데이터 삭제
@@ -159,7 +160,6 @@ public class TestDaoWeb {
 
 
 	@Test
-	@Ignore
 	public void doRetrieve() {
 		//삭제
 		//---------------------------------------

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<!DOCTYPE tiles-definitions 
+PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" 
+"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
 <tiles-definitions>
     <definition name="basede-finition" 
     template="/WEB-INF/views/tiles/layouts/defaultLayout.jsp">
+       
         <!-- 제목처리 -->
         <put-attribute name="title" value=""/>
         
@@ -18,7 +22,7 @@
         <put-attribute name="body" 
         value=""/>
         
-        <!-- 메뉴 -->
+        <!-- footer -->
         <put-attribute name="footer" 
         value="/WEB-INF/views/tiles/layouts/footer.jsp"/>
     </definition>
