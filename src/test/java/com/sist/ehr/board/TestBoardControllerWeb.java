@@ -115,7 +115,7 @@ public class TestBoardControllerWeb {
 					 .param("pageSize", "10")
 					 .param("searchDiv", "")
 					 .param("searchWord", " ");
-					;
+					
 					
 		ResultActions  resultActions = mockMvc.perform(createMesage)
 				.andExpect(status().is2xxSuccessful())	

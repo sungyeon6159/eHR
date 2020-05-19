@@ -1,9 +1,11 @@
 package com.sist.ehr.member.web;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Qualifier;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.LocaleResolver;
 
 import com.google.gson.Gson;
 import com.sist.ehr.cmn.DTO;
@@ -25,7 +28,9 @@ import com.sist.ehr.member.service.UserVO;
 
 @Controller
 public class MemberController {
-
+	@Autowired
+	LocaleResolver localeResolver;
+	
 	private final Logger  LOG = LoggerFactory.getLogger(MemberController.class);
 
 	//@Qualifier("dummyMailSender") : root-context.xml bean id
@@ -41,7 +46,7 @@ public class MemberController {
 	@RequestMapping(value = "login/login.do",method = RequestMethod.POST
 			,produces ="application/json; charset=UTF-8" )
 	@ResponseBody
-	public String doLogin(UserVO user, HttpSession session) {
+	public String doLogin(UserVO user, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
 		//1.idPassCheck call
 		//1.1. return 10 -> "ID를 확인하세요."
 		//1.2. return 20 -> "비번을 확인하세요."
@@ -76,6 +81,13 @@ public class MemberController {
 			LOG.debug("2===================");
 			LOG.debug("2=userInfo="+userInfo);
 			LOG.debug("2===================");
+			
+			//Locale
+			String lang = StringUtil.nvl(req.getParameter("lang"));
+			
+			Locale  paramLocale=new Locale(lang);
+			localeResolver.setLocale(req, res, paramLocale);
+			
 			session.setAttribute("user", userInfo);
 		}
 
