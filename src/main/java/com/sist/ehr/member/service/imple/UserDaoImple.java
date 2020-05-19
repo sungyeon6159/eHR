@@ -39,35 +39,70 @@ public class UserDaoImple implements UserDao {
 	SqlSessionTemplate sqlSessionTemplate;
 
 
-	RowMapper<UserVO> rowMapper = new RowMapper<UserVO>() {
-
-		public UserVO mapRow(ResultSet rs, int rowNum) throws SQLException {
-			UserVO outData=new UserVO();
-			outData.setU_id(rs.getString("u_id"));
-			outData.setName(rs.getString("name"));
-			outData.setPasswd(rs.getString("passwd"));
-
-			//-----------------------------------------
-			//-2020/04/09 등업 요건 추가
-			//-----------------------------------------
-			outData.setLevel(Level.valueOf(rs.getInt("u_level")));
-			outData.setLogin(rs.getInt("login"));
-			outData.setRecommend(rs.getInt("recommend"));
-			outData.setEmail(rs.getString("mail"));
-			outData.setRegDt(rs.getString("reg_dt"));
-			outData.setNum(rs.getInt("rnum"));
-			outData.setTotalCnt(rs.getInt("total_cnt"));
-			return outData;
-		}
-
-	};
-
-
-	//JDBCTemplate
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-
 	public UserDaoImple() {}
+
+	public int passCheck(DTO dto) {
+		int cnt = 0;
+		UserVO inVO = (UserVO) dto;
+
+		LOG.debug("1==============================");
+		LOG.debug("1=inVO="+inVO);
+		LOG.debug("1==============================");
+
+		// namespace+id = com.sist.ehr.user.doUpdate
+		String statement = NAMESPACE+".passCheck";
+		LOG.debug("2==============================");
+		LOG.debug("2=statement="+statement);
+		LOG.debug("2==============================");
+
+		cnt = this.sqlSessionTemplate.selectOne(statement, inVO);
+		LOG.debug("3==============================");
+		LOG.debug("3=cnt="+cnt);
+		LOG.debug("3==============================");
+
+		LOG.debug("=cnt= "+cnt);
+		return cnt;
+	}
+	/**
+	 * ID 체크: 성공>0
+	 * @param dto
+	 * @return int
+	 */
+	public int idCheck(DTO dto) {
+		int cnt = 0;
+		UserVO inVO = (UserVO) dto;
+
+		LOG.debug("1==============================");
+		LOG.debug("1=inVO="+inVO);
+		LOG.debug("1==============================");
+
+		// namespace+id = com.sist.ehr.user.doUpdate
+		String statement = NAMESPACE+".idCheck";
+		LOG.debug("2==============================");
+		LOG.debug("2=statement="+statement);
+		LOG.debug("2==============================");
+
+		cnt = this.sqlSessionTemplate.selectOne(statement, inVO);
+		LOG.debug("3==============================");
+		LOG.debug("3=cnt="+cnt);
+		LOG.debug("3==============================");
+
+		LOG.debug("=cnt= "+cnt);
+		return cnt;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -121,19 +156,21 @@ public class UserDaoImple implements UserDao {
 	public int count(DTO dto) {
 		int cnt = 0;
 		UserVO inVO = (UserVO) dto;
-		StringBuilder  sb=new StringBuilder();
-		sb.append(" SELECT COUNT(*) cnt \n");
-		sb.append(" FROM  HR_MEMBER     \n");
-		sb.append(" WHERE u_id like ?   \n");
 
+		LOG.debug("1==============================");
+		LOG.debug("1=inVO="+inVO);
+		LOG.debug("1==============================");
 
-		//Query수행
-		LOG.debug("==============================");
-		LOG.debug("=Query=\n"+sb.toString());
-		LOG.debug("=Param= "+inVO.toString());
-		cnt = this.jdbcTemplate.queryForObject(sb.toString()
-				, new Object[] {"%"+inVO.getU_id()+"%"}
-		        , Integer.class);
+		// namespace+id = com.sist.ehr.user.doUpdate
+		String statement = NAMESPACE+".count";
+		LOG.debug("2==============================");
+		LOG.debug("2=statement="+statement);
+		LOG.debug("2==============================");
+
+		cnt = this.sqlSessionTemplate.selectOne(statement, inVO);
+		LOG.debug("3==============================");
+		LOG.debug("3=cnt="+cnt);
+		LOG.debug("3==============================");
 
 		LOG.debug("=cnt= "+cnt);
 		return cnt;
@@ -197,33 +234,31 @@ public class UserDaoImple implements UserDao {
 	 *@return
 	 */
 	public List<UserVO> getAll(DTO dto) {
-		UserVO inVO = (UserVO) dto;
-		StringBuilder  sb=new StringBuilder();
-		sb.append(" SELECT                                               \n");
-		sb.append("     u_id,                                            \n");
-		sb.append("     name,                                            \n");
-		sb.append("     passwd,                                          \n");
-		sb.append("     u_level,                                         \n");
-		sb.append("     login,                                           \n");
-		sb.append("     recommend,                                       \n");
-		sb.append("     mail,                                            \n");
-		sb.append("     TO_CHAR(reg_dt,'YYYY/MM/DD HH24MISS') AS reg_dt, \n");
-		sb.append("     1 rnum,       \n");
-		sb.append("     1 total_cnt   \n");
-		sb.append(" FROM                                                 \n");
-		sb.append("     hr_member                      \n");
-		sb.append(" WHERE  u_id like ?                 \n");
-		sb.append(" ORDER BY u_id                      \n");
-		LOG.debug("==============================");
-		LOG.debug("=Query=\n"+sb.toString());
-		LOG.debug("=Param="+inVO);
-		//new Object[] {"%"+inVO.getU_id()+"%"}
-		List<UserVO> list = this.jdbcTemplate.query(sb.toString()
-				               , new Object[] {"%"+inVO.getU_id()+"%"}
-				               , rowMapper);
-		LOG.debug("=list="+list);
-		LOG.debug("==============================");
-		return list;
+		UserVO outVO = null;        //return UserVO
+		UserVO inVO  = (UserVO) dto;//Param UserVO
+
+		LOG.debug("1==============================");
+		LOG.debug("1=inVO="+inVO);
+		LOG.debug("1==============================");
+
+		// namespace+id = com.sist.ehr.user.getAll
+		String statement = NAMESPACE+".getAll";
+		LOG.debug("2==============================");
+		LOG.debug("2=statement="+statement);
+		LOG.debug("2==============================");
+
+		List<UserVO> list = this.sqlSessionTemplate.selectList(statement, inVO);
+
+		//hLevel -> Level전환
+		List<UserVO> outList=new ArrayList<UserVO>();
+		for(UserVO vo: list) {
+			vo.setLevel(Level.valueOf(vo.gethLevel()));
+			outList.add(vo);
+			LOG.debug("3=vo="+vo);
+
+		}
+
+		return outList;
 	}
 
 	public List<?> doRetrieve(DTO dto) {

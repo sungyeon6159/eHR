@@ -9,48 +9,48 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
-	<!-- mybatis -->	
+	<!-- mybatis -->
 	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate"
 	   destroy-method="clearCache">
 	   <constructor-arg index="0" ref="sqlSessionFactoryBean"></constructor-arg>
-	</bean>	
-		
+	</bean>
+
 	<!-- mybatis config파일 read : SqlSessionFactoryBean-->
 	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
 	   <property name="configLocation" value="classpath:mybatis-config.xml" />
 	   <property name="mapperLocations" value="classpath:mappers/**/*.xml" />
 	   <property name="dataSource"  ref="dataSource"/>
 	</bean>
-	
-    <!-- Locale: 로케일(locale [loukǽl] 로캘 / [loukάːl] 로칼)은 사용자의 언어, 
-    국가뿐 아니라 사용자 인터페이스에서 사용자가 선호하는 사항을 지정한 매개 변수의 모임이다. 
+
+    <!-- Locale: 로케일(locale [loukǽl] 로캘 / [loukάːl] 로칼)은 사용자의 언어,
+    국가뿐 아니라 사용자 인터페이스에서 사용자가 선호하는 사항을 지정한 매개 변수의 모임이다.
     보통 로케일 증명자는 적어도 하나의 언어 증명자와 하나의 지역 증명자를 가지고 있다.
      id는 반듯이  localeResolver 사용
      웹브라우저 요청: Locale정보가 http요청 헤더에 포함되어 서버로 전송:localeResolver Read
     -->
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
-    
+
     </bean>
-            
+
     <!-- 다국어 설정 Read -->
     <!-- messageSource.properties read: id는 반듯이  messageSource 사용-->
-    <bean id="messageSource" 
+    <bean id="messageSource"
         class="org.springframework.context.support.ResourceBundleMessageSource">
        <property name="basenames">
            <list>
                <value>message.messageSource</value>
            </list>
-       </property>    
-        
+       </property>
+
     </bean>
-    
-    
+
+
     <!-- Root Context: defines shared resources visible to all other web components -->
     <!-- FileUpload: -->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
        <property name="defaultEncoding" value="UTF-8" />
        <!-- Upload Size: 1024*1024*50: "5242880‬0" -->
-       <property name="maxUploadSize"    value="52428800" />     
+       <property name="maxUploadSize"    value="52428800" />
        <property name="maxInMemorySize"  value="52428800" />
     </bean>
 
@@ -69,11 +69,11 @@
                </prop>
            </props>
        </property>
-       
+
        <!-- Default :error -->
        <property name="defaultErrorView" value="common/error"/>
     </bean>
-    
+
     <!-- mail -->
     <!-- spring mail:id/pass -->
     <bean  id="passwordAuth"  class="javax.mail.PasswordAuthentication">
@@ -82,16 +82,16 @@
         </constructor-arg>
         <constructor-arg index="1">
             <value>비번</value>
-        </constructor-arg>        
+        </constructor-arg>
     </bean>
-    
+
     <!-- Authenticator -->
     <bean id="authenticator" class="javax.mail.Authenticator">
         <lookup-method  name="getPasswordAuthentication"
          bean="passwordAuth"
         />
     </bean>
-    
+
     <!-- Session -->
     <bean id="emailSession" class="javax.mail.Session">
         <constructor-arg>
@@ -105,22 +105,22 @@
         </constructor-arg>
         <constructor-arg ref="authenticator" />
     </bean>
-    
-    
+
+
     <!-- JavaMailSenderImpl -->
     <bean  id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="session" ref="emailSession"></property>
     </bean>
-    
+
     <bean id="dummyMailSender" class="com.sist.ehr.member.service.imple.DummyMailSender">
-    
+
     </bean>
 
     <!-- JDBC Transaction/Connection -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
     </bean>
-    
+
     <!-- Transaction Advice -->
     <tx:advice id="transactionAdvice"  transaction-manager="transactionManager">
         <tx:attributes>
@@ -129,30 +129,30 @@
             <!-- 트랜잭션 대상 up-->
             <tx:method name="up*" />
         </tx:attributes>
-    </tx:advice> 
-    
-    <!-- Trasaction Advisor -->  
+    </tx:advice>
+
+    <!-- Trasaction Advisor -->
     <aop:config>
-        <aop:pointcut expression="execution(* com.sist.ehr..*Imple.up*(..))" 
+        <aop:pointcut expression="execution(* com.sist.ehr..*Imple.up*(..))"
              id="serviceTxPointCut"/>
-        <aop:advisor advice-ref="transactionAdvice"  pointcut-ref="serviceTxPointCut"/>    
-    </aop:config>   
-    
-    
-    
+        <aop:advisor advice-ref="transactionAdvice"  pointcut-ref="serviceTxPointCut"/>
+    </aop:config>
+
+
+
     <!-- properties file read -->
     <context:property-placeholder
       location="classpath:/resources/config/database.properties"
     />
-        
+
 <!--     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="${jdbc.driverClass}"/>
         <property name="url" value="${jdbc.url}"/>
         <property name="username" value="${jdbc.username}"/>
         <property name="password" value="${jdbc.password}"/>
     </bean> -->
-    <bean id="dataSource" 
-        class="org.apache.commons.dbcp.BasicDataSource"  
+    <bean id="dataSource"
+        class="org.apache.commons.dbcp.BasicDataSource"
         destroy-method="close"
         p:driverClassName="${jdbc.driverClass}"
         p:url="${jdbc.url}"
@@ -160,11 +160,11 @@
         p:password="${jdbc.password}"
         p:maxActive="10"
         p:maxIdle="5"
-        p:maxWait="-1" 
-    />    
+        p:maxWait="-1"
+    />
     <!-- JdbcTemplate -->
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="dataSource"></property>
-    </bean>     
+    </bean>
 </beans>
 

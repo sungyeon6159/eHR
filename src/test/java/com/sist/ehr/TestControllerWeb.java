@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.sist.ehr.cmn.DTO;
@@ -52,19 +53,19 @@ import com.sist.ehr.member.service.imple.UserDaoImple;
 public class TestControllerWeb {
 
 	private final Logger  LOG = LoggerFactory.getLogger(TestControllerWeb.class);
-	
+
 	@Autowired
 	WebApplicationContext  webApplicationContext;
-	
+
 	private List<UserVO> users;
-	
+
 	@Autowired
 	UserService  userService;
-	
+
 	//브라우저 대신 Mock
 	private MockMvc mockMvc;
-	
-	
+
+
 	@Before
 	public void setUp() {
 		LOG.debug("*********************");
@@ -72,73 +73,95 @@ public class TestControllerWeb {
 		LOG.debug("*********************");
 		users = Arrays.asList(
 					 new UserVO("j01_124","이상무1","1234",Level.BASIC,MIN_LOGINCOUNT_FOR_SILVER-1,0,"jamesol@paran.com","")
-					,new UserVO("j02_124","이상무2","1234",Level.BASIC,MIN_LOGINCOUNT_FOR_SILVER,0,"jamesol@paran.com","")					
+					,new UserVO("j02_124","이상무2","1234",Level.BASIC,MIN_LOGINCOUNT_FOR_SILVER,0,"jamesol@paran.com","")
 					,new UserVO("j03_124","이상무3","1234",Level.SILVER,MIN_LOGINCOUNT_FOR_SILVER+10,MIN_RECCOMENDCOUNT_FOR_GOLD-1,"jamesol@paran.com","")
 					,new UserVO("j04_124","이상무4","1234",Level.SILVER,MIN_LOGINCOUNT_FOR_SILVER+10,MIN_RECCOMENDCOUNT_FOR_GOLD,"jamesol@paran.com","")
 					,new UserVO("j05_124","이상무5","1234",Level.GOLD,MIN_LOGINCOUNT_FOR_SILVER+33,MIN_RECCOMENDCOUNT_FOR_GOLD+3,"jamesol@paran.com","")
 				);
-				
+
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		LOG.debug("=====================");
 		LOG.debug("=webApplicationContext="+webApplicationContext);
 		LOG.debug("=mockMvc="+mockMvc);
 		LOG.debug("=userService="+userService);
-		LOG.debug("=====================");		
+		LOG.debug("=====================");
 
 	}
-	
+
+	@Test
+	public void doLogin()throws Exception{
+		//url+param
+		MockHttpServletRequestBuilder  createMesage
+		           = MockMvcRequestBuilders.post("/login/login.do")
+		             .param("u_id", users.get(1).getU_id())
+		             .param("passwd", users.get(1).getPasswd()+"")
+		             ;
+		ResultActions  resultActions  = this.mockMvc.perform(createMesage)
+		                    .andExpect(status().is2xxSuccessful())
+		                    .andExpect(MockMvcResultMatchers.jsonPath("$.msgId", is("30")));
+
+		String result = resultActions.andDo(print())
+				.andReturn()
+				.getResponse().getContentAsString();
+		LOG.debug("=====================");
+		LOG.debug("=result="+result);
+		LOG.debug("=====================");
+	}
+
+
 	//단건조회
 	@Test
+	@Ignore
 	public void doSelectOne() throws Exception {
 		//url+param
-		MockHttpServletRequestBuilder  createMesage 
+		MockHttpServletRequestBuilder  createMesage
 		           = MockMvcRequestBuilders.post("/member/do_select_one.do")
-		             .param("u_id", users.get(0).getU_id());		
-		
+		             .param("u_id", users.get(0).getU_id());
+
 		//MediaType.APPLICATION_JSON_UTF8 ==application/json;charset=UTF-8
 		ResultActions  resultActions = mockMvc.perform(createMesage)
-			.andExpect(status().is2xxSuccessful())	
+			.andExpect(status().is2xxSuccessful())
 			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
 		    .andExpect(MockMvcResultMatchers.jsonPath("$.u_id", is(users.get(0).getU_id())))
 		    .andExpect(MockMvcResultMatchers.jsonPath("$.name", is(users.get(0).getName())))
 		    ;
-				
+
 		String result = resultActions.andDo(print())
 				.andReturn()
 				.getResponse().getContentAsString();
 		LOG.debug("=====================");
 		LOG.debug("=result="+result);
-		LOG.debug("=====================");  		
-		
-		
+		LOG.debug("=====================");
+
+
 	}
-	
+
 	@Test
 	@Ignore
 	public void doDelete() throws Exception {
 		//url+param
-		MockHttpServletRequestBuilder  createMesage 
+		MockHttpServletRequestBuilder  createMesage
 		           = MockMvcRequestBuilders.post ("/member/do_delete.do")
 		             .param("u_id", users.get(0).getU_id());
 		//MediaType.APPLICATION_JSON_UTF8 ==application/json;charset=UTF-8
 		ResultActions  resultActions = mockMvc.perform(createMesage)
-			.andExpect(status().is2xxSuccessful())	
+			.andExpect(status().is2xxSuccessful())
 			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
 		    .andExpect(MockMvcResultMatchers.jsonPath("$.msgId", is("1")));
-		
+
 		String result = resultActions.andDo(print())
 				.andReturn()
 				.getResponse().getContentAsString();
 		LOG.debug("=====================");
 		LOG.debug("=result="+result);
-		LOG.debug("=====================");  		
-		
+		LOG.debug("=====================");
+
 	}
-	
-	@Test 
+
+	@Test
 	@Ignore
 	public void add() throws Exception {
-		MockHttpServletRequestBuilder createMessage = 
+		MockHttpServletRequestBuilder createMessage =
 				MockMvcRequestBuilders.post("/member/add.do")
 				.param("u_id", users.get(0).getU_id())
 				.param("name", users.get(0).getName())
@@ -148,7 +171,7 @@ public class TestControllerWeb {
 				.param("recommend", users.get(0).getRecommend()+"")
 				.param("email", users.get(0).getEmail())
 				;
-		
+
 		ResultActions  resultActions =mockMvc.perform(createMessage)
 				       .andExpect(MockMvcResultMatchers.content().contentType("application/json;charset=UTF-8"))
 				       .andExpect(MockMvcResultMatchers.jsonPath("$.msgId", is("1")))
@@ -158,9 +181,9 @@ public class TestControllerWeb {
 						.getResponse().getContentAsString();
 		LOG.debug("=====================");
 		LOG.debug("=result="+result);
-		LOG.debug("=====================");  
+		LOG.debug("=====================");
 	}
-	
+
 //	static imports: MockMvcRequestBuilders.*, MockMvcResultMatchers.*
 //
 //	 mockMvc.perform(get("/person/1"))
@@ -175,25 +198,25 @@ public class TestControllerWeb {
 //	   .andExpect(model().attributeExists("person"))
 //	   .andExpect(flash().attributeCount(1))
 //	   .andExpect(flash().attribute("message", "success!"));
-//	 
-	
-	
-	
-	
+//
+
+
+
+
 	@Test
 	public void test() {
 		LOG.debug("=====================");
 		LOG.debug("=test()=");
 		LOG.debug("=====================");
-		
-		
+
+
 		LOG.debug("=====================");
 		LOG.debug("=userService="+userService);
-		LOG.debug("=====================");		
-		
+		LOG.debug("=====================");
+
 		assertThat(1, is(1));
-		
+
 	}
-	
+
 
 }

@@ -54,7 +54,7 @@
                 <div>
                     <h2 class="text-center"><spring:message code="message.user.login.title" /></h2>
                 </div>  
-                <form action="${hContext}/login.do" class="form-horizontal" name="login_form" method="get">
+                <form action="${hContext}/login/login.do" class="form-horizontal" name="login_form" method="get">
 				    <!-- div 언어 -->
 				    <div class="form-group">
 				         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   

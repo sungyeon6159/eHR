@@ -1,5 +1,6 @@
+
 /**
- * 
+ *
  */
 package com.sist.ehr.member.service.imple;
 
@@ -69,9 +70,9 @@ public class UserServiceImple implements UserService {
 	 * Spring Java Mail ------------------------- -----------------------
 	 * SimpleMailMessage(Spring) MimeMessage MailSender Transport JavaMailSenderImpl
 	 * ------------------------- -----------------------
-	 * 
+	 *
 	 * 등업된 사용자에게 메일 전송
-	 * 
+	 *
 	 * @param user
 	 */
 	private void sendUpgradeEmail(UserVO user) {
@@ -132,63 +133,63 @@ public class UserServiceImple implements UserService {
 //			비밀번호 : 네이버 로그인 비밀번호
 //		 */
 //		String smtpHost = "smtp.naver.com";
-//		final String userId   = "jamesol";     
+//		final String userId   = "jamesol";
 //		final String userPass = "비밀번호";
 //		int   port      = 465;
 //		//------------------------------------------
-//		//받는사람		
-//		//제목		
-//		//내용		
-//		//SMTP서버 설정		
+//		//받는사람
+//		//제목
+//		//내용
+//		//SMTP서버 설정
 //		//인증
 //		//------------------------------------------
-//		
+//
 //		//받는사람
-//		String recipient = user.getEmail();	
+//		String recipient = user.getEmail();
 //		//제목
-//		String title     = user.getName()+"님 등업(https://cafe.naver.com/kndjang)";		
+//		String title     = user.getName()+"님 등업(https://cafe.naver.com/kndjang)";
 //		//내용
 //		String contents  = user.getU_id()+"님 등급이\n"+user.getLevel().name()+"로 등업 되었습니다.";
-//		//SMTP서버 설정	
+//		//SMTP서버 설정
 //		Properties props= System.getProperties();
 //		props.put("mail.smtp.host", smtpHost);
 //		props.put("mail.smtp.port", port);
 //		props.put("mail.smtp.auth", true);
 //		props.put("mail.smtp.ssl.enable", true);
-//		props.put("mail.smtp.ssl.trust", smtpHost);		
+//		props.put("mail.smtp.ssl.trust", smtpHost);
 //		//인증
 //		Session  session = Session.getInstance(props, new Authenticator() {
 //			String uName = userId;
 //			String passwd= userPass;
-//			
+//
 //			protected  PasswordAuthentication getPasswordAuthentication() {
 //				return new PasswordAuthentication(userId,passwd);
 //			}
 //		});
 //		session.setDebug(true);
-//		
+//
 //		//------------------------------------------
 //		//Message에,받는사람,제목,내용,인증
 //		//전송:Java
 //		//------------------------------------------
 //		Message  mimeMessage  =new MimeMessage(session);
-//		
+//
 //		try {
 //			//보내는 사람
 //			mimeMessage.setFrom(new InternetAddress("jamesol@naver.com"));
-//			
+//
 //			//받는사람
 //			mimeMessage.setRecipient(Message.RecipientType.TO
 //					            , new InternetAddress(recipient));
-//			
+//
 //			//제목
 //			mimeMessage.setSubject(title);
 //			//내용
 //			mimeMessage.setText(contents);
-//			
+//
 //			//전송
 //			Transport.send(mimeMessage);
-//			
+//
 //		} catch (AddressException e) {
 //			LOG.debug("===================");
 //			LOG.debug("=AddressException="+e.getMessage());
@@ -197,14 +198,14 @@ public class UserServiceImple implements UserService {
 //		} catch (MessagingException e) {
 //			LOG.debug("===================");
 //			LOG.debug("=MessagingException="+e.getMessage());
-//			LOG.debug("===================");			
+//			LOG.debug("===================");
 //			e.printStackTrace();
 //		}
-//		
+//
 //		LOG.debug("===================");
 //		LOG.debug("=mail send to="+recipient);
-//		LOG.debug("===================");		
-//		
+//		LOG.debug("===================");
+//
 //	}
 
 	/**
@@ -216,7 +217,7 @@ public class UserServiceImple implements UserService {
 
 	/**
 	 * 최초가입시 : Level.BASIC
-	 * 
+	 *
 	 * @param user
 	 */
 	public int add(UserVO user) {
@@ -261,20 +262,20 @@ public class UserServiceImple implements UserService {
 			// SILVER-> GOLD
 			user.setLevel(nextLevel);
 		}
-		  
-		//Transaction 예외 발생용.: 
+
+		//Transaction 예외 발생용.:
 //		String id ="j04_124";
 //		if(user.getU_id().equals(id)) {
 //			LOG.debug("&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 //			LOG.debug(user.getLevel() + "은 업그레이드가 불가능 합니다.");
-//			LOG.debug("&&&&&&&&&&&&&&&&&&&&&&&&&&&");		
+//			LOG.debug("&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 //			throw new IllegalArgumentException(user.getLevel() + "은 업그레이드가 불가능 합니다.");
 //		}
-		
-		
-		
-		
-		
+
+
+
+
+
 		userDao.doUpdate(user);
 		// mail send
 		sendUpgradeEmail(user);
@@ -284,11 +285,11 @@ public class UserServiceImple implements UserService {
 	 * 트랜잭션 코드가 소스에서 사라짐:UserServiceTx (DI)통해 주입 부가기능 부여.
 	 * 사용자 등업 1. 전체 사용자를 읽어 들인다. 2. 등업 대상자를 선별한다. 2.1. BASIC사용자 : 로그인CNT 50이상(=포함)이면
 	 * : SILVER 2.2. SILVER사용자: 추천CNT 30이상(=포함): GOLD 2.3. GOLD대상 아님. 3. 등업한다.
-	 * 
+	 *
 	 * @throws SQLException
 	 */
 	public void upgradeLevels(UserVO userVO) throws Exception {
-		
+
 		List<UserVO> list = (List<UserVO>) userDao.getAll(userVO);
 		for (UserVO user : list) {
 			if (canUpgradeLevel(user) == true) {// upgrade대상 선별
@@ -323,6 +324,38 @@ public class UserServiceImple implements UserService {
 	public List<?> doRetrieve(DTO dto) {
 		return userDao.doRetrieve(dto);
 	}
+
+	@Override
+	public int idPassCheck(DTO dto) {
+		//1. idCheck   실패: 10
+		//2. passCheck 실패: 20
+		//3. 성공: 30
+		int flag  =0;
+		//1.
+		flag = userDao.idCheck(dto);
+		if(flag<1) {
+			return 10;//id not found
+		}
+
+        //2.
+		flag = userDao.passCheck(dto);
+		if(flag<1) {
+			return 20;//비번확인
+		}
+
+
+		return 30;
+	}
+
+
+
+
+
+
+
+
+
+
 
 }
 

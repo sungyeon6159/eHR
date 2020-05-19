@@ -49,6 +49,60 @@ public class TestDaoWeb {
 	@Autowired
 	UserDaoImple  dao;
 
+	@Test
+	public void passCheck() throws SQLException {
+		//1.전체삭제
+		//2.insert
+		//3.idCheck
+		//4.return 1=1
+		LOG.debug("=====================");
+		LOG.debug("=passCheck()=");
+		LOG.debug("=====================");
+		//1.
+		dao.doDelete(user01);
+		dao.doDelete(user02);
+		dao.doDelete(user03);
+
+		//2.
+		int flag = dao.doInsert(user01);
+		assertThat(flag, is(1));
+
+		//3.
+		int idCnt = dao.passCheck(user01);
+		assertThat(idCnt, is(1));
+	}
+
+	@Test
+	public void idCheck() throws SQLException {
+		//1.전체삭제
+		//2.insert
+		//3.idCheck
+		//4.return 1=1
+		LOG.debug("=====================");
+		LOG.debug("=idCheck()=");
+		LOG.debug("=====================");
+		//1.
+		dao.doDelete(user01);
+		dao.doDelete(user02);
+		dao.doDelete(user03);
+
+		//2.
+		int flag = dao.doInsert(user01);
+		assertThat(flag, is(1));
+
+		//3.
+		int idCnt = dao.idCheck(user01);
+		assertThat(idCnt, is(1));
+	}
+
+
+
+
+
+
+
+
+
 
 	@Test
 	@Ignore
@@ -160,6 +214,7 @@ public class TestDaoWeb {
 
 
 	@Test
+	@Ignore
 	public void doRetrieve() {
 		//삭제
 		//---------------------------------------
@@ -217,6 +272,7 @@ public class TestDaoWeb {
 		user01.setName(user01.getName()+"_u");
 		user01.setPasswd(user01.getPasswd()+"_u");
 		user01.setLevel(Level.SILVER);//basic -> silver
+		user01.sethLevel(2);//basic -> silver
 		user01.setLogin(10);
 		user01.setRecommend(9);
 		user01.setEmail(user01.getEmail()+"_u");
@@ -329,17 +385,6 @@ public class TestDaoWeb {
 	public void checkSameUser(UserVO orgVO, UserVO vsVO) {
 		assertTrue(orgVO.equals(vsVO));
 	}
-
-
-
-
-
-
-
-
-
-
-
 
 
 	@Test

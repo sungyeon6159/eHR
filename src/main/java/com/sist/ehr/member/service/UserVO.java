@@ -76,7 +76,10 @@ public class UserVO extends DTO {
 			default: throw new AssertionError("Unknown value"+value);
 		   }
 		 */
+
+
 		Level tmpLevel=Level.valueOf(hLevel);
+
 		level = tmpLevel;
 
 	}
